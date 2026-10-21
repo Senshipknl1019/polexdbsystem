@@ -1,49 +1,57 @@
-
 <?php
+include('conecctiondb.php');
+
 $message = "";
 
 if (isset($_POST['register'])) {
-    $username = $_POST['username'];
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
     $password = $_POST['password'];
-    $confirm = $_POST['confirm'];
+    $confirm  = $_POST['confirm'];
 
-    if ($password == $confirm) {
-        $message = "Registration successful!";
+    if ($password === $confirm) {
+        $query = "INSERT INTO users (username, password) VALUES ('$username', '$password')";
+        if (mysqli_query($conn, $query)) {
+            $message = "Registration successful! You can now login.";
+        } else {
+            $message = "Error: " . mysqli_error($conn);
+        }
     } else {
         $message = "Passwords do not match!";
     }
 }
 ?>
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Basic Register</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="style.css?v=1">
 </head>
 <body>
 
-    <h2>Register</h2>
+    <div class="container">
+        <h2>Register</h2>
 
-    <form method="POST">
-        <label>Username:</label>
-        <input type="text" name="username" required>
-        <br><br>
+        <form method="POST">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
 
-        <label>Password:</label>
-        <input type="password" name="password" required>
-        <br><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
 
-        <label>Confirm Password:</label>
-        <input type="password" name="confirm" required>
-        <br><br>
+            <label for="confirm">Confirm Password:</label>
+            <input type="password" id="confirm" name="confirm" required>
 
-        <button type="submit" name="register">Register</button>
-    </form>
+            <button type="submit" name="register">Register</button>
+        </form>
 
-    <p><?php echo $message; ?></p>
+        <?php if (!empty($message)): ?>
+            <p class="message"><?php echo $message; ?></p>
+        <?php endif; ?>
 
-    <p>Naa nakay account account? <a href="login.php">Login</a></p>
+        <p>Naa nakay account? <a href="login.php">Login</a></p>
+    </div>
 
 </body>
 </html>
